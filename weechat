@@ -5,7 +5,6 @@
 
 */set weechat.bar.status.color_bg 0
 */set weechat.bar.title.color_bg 0
-*/set buflist.format.hotlist_message "${color:240}"
 */set buflist.format.buffer_current "${color:,240}${format_buffer}"
 */set weechat.bar.buflist.position top
 */set weechat.bar.buflist.items "buflist"
