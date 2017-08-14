@@ -47,6 +47,8 @@
 
 */server add freenode chat.freenode.net
 */set irc.server.freenode.autoconnect on
+*/set irc.server_default.username "tuga3d"
+*/set irc.server_default.realname "Paulo Gomes"
 
 */aspell enable
 */set aspell.check.default_dict en
