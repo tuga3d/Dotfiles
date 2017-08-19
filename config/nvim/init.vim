@@ -63,7 +63,7 @@ call plug#begin('~/.config/nvim/plugged')
 
     " Plug 'kopischke/vim-stay'
     Plug 'Shougo/echodoc.vim'
-    Plug 'davidhalter/jedi-vim'
+    " Plug 'davidhalter/jedi-vim'
 "}}}
 " Plugins Config"{{{
     " airline"{{{
@@ -196,6 +196,7 @@ set colorcolumn=80
 set fdo+=jump
 set noshowmode
 set modeline
+set foldmethod=syntax
 "}}}
 
 " close preview window"{{{
