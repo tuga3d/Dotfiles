@@ -10,7 +10,7 @@
 */set irc.server.freenode.username "tuga3d"
 */set irc.server.freenode.realname "Paulo Gomes"
 */set irc.server.freenode.nicks "tuga3d,paulo_gomes"
-*/set irc.server.freenode.autojoin "#godotengine,#godotengine-devel,#godotengine-doc"
+*/set irc.server.freenode.autojoin "#godotengine,#godotengine-devel,#godotengine-doc,#godotengine-atelier"
 */print -core ========================= KEYBINDS =========================
 */key bind meta-g /go
 */key bind meta-. /bar toggle nicklist
@@ -77,7 +77,4 @@
 */trigger add close_report signal "buffer_closing" "" "" "/print -core Buffer closed: ${buffer[${tg_signal_data}].full_name}"
 */print -core ========================= FILTERS =========================
 */filter add irc_smart * irc_smart_filter *
-*/print -core ========================= RELAY =========================
-*/relay add weechat 9001
-*/set relay.network.allow_empty_password on
 */window refresh
