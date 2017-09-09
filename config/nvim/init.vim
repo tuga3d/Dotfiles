@@ -14,8 +14,6 @@ let maplocalleader='\'
 "}}}
 
 set termguicolors
-" use set guicursor this was removed
-let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 let g:python_host_prog='/usr/bin/python'
 let g:python3_host_prog='/usr/bin/python3'
@@ -47,6 +45,8 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
     Plug 'zchee/deoplete-jedi', {'for': 'python', 'do': 'git submodule update --recursive --init'}
     Plug 'Shougo/neco-vim'
+    Plug 'zchee/deoplete-clang'
+    Plug 'Shougo/neoinclude.vim'
 
     Plug 'vim-python/python-syntax'
     Plug 'Shougo/neco-syntax', {'for': 'vim'}
@@ -57,13 +57,10 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-surround'
 
-    Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
-    Plug 'michaeljsmith/vim-indent-object'
     Plug 'rliang/nvim-pygtk3', {'do': 'make install'}
 
     " Plug 'kopischke/vim-stay'
     Plug 'Shougo/echodoc.vim'
-    " Plug 'davidhalter/jedi-vim'
 "}}}
 " Plugins Config"{{{
     " airline"{{{
@@ -131,6 +128,11 @@ call plug#begin('~/.config/nvim/plugged')
     " let g:deoplete#sources#jedi#show_docstring = 1
     let g:deoplete#sources#jedi#python_path = 'python3'
     "}}}
+    " deoplete-clang"{{{
+    let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-4.0/lib/libclang.so.1'
+    let g:deoplete#sources#clang#clang_header = '/usr/lib/llvm-4.0'
+    let g:deoplete#sources#clang#sort_algo = 'priority'
+    "}}}
     " auto-pairs"{{{
     " see issue #116
     let g:AutoPairsMapCR = 0
@@ -140,10 +142,6 @@ call plug#begin('~/.config/nvim/plugged')
     let g:indentLine_color_gui = '#343d46'
     let g:indentLine_char = '⋮'
     "}}}
-    " gitgutter"{{{
-    let g:gitgutter_enabled = 0
-    " let g:gitgutter_override_sign_column_highlight = 0
-    "}}}
     " python-syntax"{{{
     let python_highlight_all = 1
     "}}}
@@ -152,10 +150,6 @@ call plug#begin('~/.config/nvim/plugged')
     "}}}
     " echodoc"{{{
     let g:echodoc#enable_at_startup=1
-    "}}}
-    " jedi-vim"{{{
-    autocmd BufWinEnter '__doc__' setlocal bufhidden=delete
-    let g:jedi#completions_enabled = 0
     "}}}
 "}}}
 call plug#end()
@@ -197,15 +191,10 @@ set fdo+=jump
 set noshowmode
 set modeline
 set foldmethod=syntax
+set tabstop=4
+set shiftwidth=4
 "}}}
 
-" close preview window"{{{
-" augroup ClosePreviewWindow
-"     autocmd!
-"     " Close preview on leaving insert mode
-"     autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-" augroup END
-"}}}
 " equalize splits on vim resize"{{{
 augroup VimResized
     autocmd!
@@ -215,8 +204,6 @@ augroup END
 " Filetype Terminal"{{{
 augroup TerminalEnter
     autocmd!
-    " Enter edit mode on terminal enter
-    autocmd WinEnter term://* :startinsert
     " autoresize terminal window
     autocmd WinLeave term://* :resize 3
     autocmd WinEnter term://* :resize 15
@@ -355,7 +342,7 @@ augroup END
     nnoremap <leader>sp ea<C-X><C-S>
     "}}}
     " <leader>ev -- edit $MYVIMRC"{{{
-    nmap <silent> <leader>ev :e $MYVIMRC<CR>
+    nmap <silent> <leader>ev :execute 'edit' resolve($MYVIMRC) <CR>
     "}}}
     " <c-l> -- clear highlight"{{{
     nnoremap <silent> <c-l> :nohlsearch<c-r>=has('diff')?'<bar>diffupdate':''<cr><cr><c-l>
@@ -382,11 +369,6 @@ augroup END
     " <c-a> <c-e> -- command mode bash mapping"{{{
     cnoremap <C-a> <Home>
     cnoremap <C-e> <End>
-    "}}}
-    " F12 -- generate ctags for python"{{{
-    " ctags -R --fields=+l --languages=python --python-kinds=-iv -f ./tags $(python -c "import os, sys; print(' '.join('{}'.format(d) for d in sys.path if os.path.isdir(d)))")
-    map <F12> :! ctags -R  --fields=+l --languages=python --python-kinds=-iv $(python3 -c "import os, sys; print(' '.join('{}'.format(d) for d in sys.path if os.path.isdir(d)))")<CR>
-    " map <F12> :! ctags -R  --fields=+l --languages=python --python-kinds=-iv $VIRTUAL_ENV/lib/python3.5/site-packages<CR>
     "}}}
     " Q -- stop messing with me!!!"{{{
     map Q <nop>
