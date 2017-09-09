@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Name=Godot
-Icon=/work/software/godot/icon.svg
-Exec=/work/software/godot/bin/godot.x11.tools.64
+Icon=/mnt/work/software/godot/icon.svg
+Exec=/mnt/work/software/godot/bin/godot.x11.tools.64
 Comment=Godot game engine
 Terminal=false
 Name[pt]=godot
