@@ -30,7 +30,6 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'ntpeters/vim-better-whitespace'
     Plug 'Yggdroot/indentLine'
 
-    Plug 'Konfekt/FastFold'
     Plug 'tmhedberg/SimpylFold', {'for': 'python'}
 
     Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
@@ -39,27 +38,26 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'airblade/vim-gitgutter'
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
+    Plug 'mattn/emmet-vim'
+    Plug 'Chiel92/vim-autoformat'
 
     Plug 'neomake/neomake'
 
     Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
     Plug 'zchee/deoplete-jedi', {'for': 'python', 'do': 'git submodule update --recursive --init'}
     Plug 'Shougo/neco-vim'
-    Plug 'zchee/deoplete-clang'
+    " Plug 'zchee/deoplete-clang'
     Plug 'Shougo/neoinclude.vim'
 
-    Plug 'vim-python/python-syntax'
+    " Plug 'vim-python/python-syntax', {'for': 'python'}
     Plug 'Shougo/neco-syntax', {'for': 'vim'}
-    Plug 'quabug/vim-gdscript'
 
     Plug 'tpope/vim-repeat'
     Plug 'jiangmiao/auto-pairs'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-surround'
+    Plug 'sheerun/vim-polyglot'
 
-    Plug 'rliang/nvim-pygtk3', {'do': 'make install'}
-
-    " Plug 'kopischke/vim-stay'
     Plug 'Shougo/echodoc.vim'
 "}}}
 " Plugins Config"{{{
@@ -204,6 +202,7 @@ augroup END
 " Filetype Terminal"{{{
 augroup TerminalEnter
     autocmd!
+    autocmd WinEnter term://* :startinsert
     " autoresize terminal window
     autocmd WinLeave term://* :resize 3
     autocmd WinEnter term://* :resize 15
@@ -248,17 +247,10 @@ augroup FileTypePython
     au Filetype python setlocal formatprg=autopep8\ --experimental\ -
 augroup END
 "}}}
-" Filetype Jinja"{{{
-augroup FileTypeJinja
+" Filetype Tpl "{{{
+augroup FileTypeTpl
     autocmd!
-    autocmd BufNewFile,BufRead *.html,*.htm,*.shtml,*.stm set filetype=jinja
-augroup END
-"}}}
-" Filetype kivy"{{{
-augroup FileTypeKivy
-    autocmd!
-    autocmd FileType kivy setlocal foldmethod=indent
-    autocmd FileType kivy setlocal commentstring=#\ %s
+    au BufReadPost *.tpl set ft=mako
 augroup END
 "}}}
 
