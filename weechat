@@ -1,39 +1,27 @@
-*/mouse enable
-*/print -core ==================== SCRIPTS ====================
+*/print -core ==================== SCRIPTS
 */script install go.py
-*/script install iset.pl
-*/script install perlexec.pl
 */script install colorize_nicks.py
-*/print -core ==================== FREENODE ====================
-*/server add freenode chat.freenode.net
-*/set irc.server.freenode.autoconnect on
-*/set irc.server.freenode.username "tuga3d"
-*/set irc.server.freenode.realname "Paulo Gomes"
-*/set irc.server.freenode.nicks "tuga3d,paulo_gomes"
-*/set irc.server.freenode.autojoin "#godotengine,#godotengine-devel,#godotengine-doc,#godotengine-atelier"
-*/print -core ========================= KEYBINDS =========================
-*/key bind meta-g /go
-*/key bind meta-. /bar toggle nicklist
-*/key bind meta-, /bar toggle buflist
-*/key bind meta2-1;2A /window scroll_up
-*/key bind meta2-1;2B /window scroll_down
-*/print -core ========================= ASPELL =========================
-*/aspell enable
-*/set aspell.check.default_dict en
-*/set aspell.check.suggestions 3
-*/set weechat.bar.status.items "[time],[buffer_last_number],[buffer_plugin],buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}+buffer_zoom+buffer_filter,scroll,[lag],[hotlist],[aspell_dict],[aspell_suggest],completion"
-*/print -core ========================= COLORS AND LOOK =========================
+*/script install iset.pl
+*/script install highmon.pl
+*/script install autosort.py
+*/print -core ==================== COLORS AND LOOK
+*/set buflist.format.buffer "${format_number}${indent}${format_nick_prefix}${color_hotlist}${format_name}${format_hotlist}"
 */set weechat.bar.title.size 0
-*/set weechat.bar.status.color_bg 0
-*/set weechat.bar.title.color_bg 0
-*/set buflist.format.buffer_current "${color:,0}${format_buffer}"
+*/set weechat.bar.input.separator on
+*/set weechat.bar.status.separator on
 */set weechat.bar.title.separator on
+*/set weechat.color.separator 240
+*/set irc.look.server_buffer independent
+*/set irc.server_default.nicks "tuga3d,paulo_gomes"
+*/set weechat.color.chat_nick_self *!lightgreen
+*/set weechat.bar.status.color_bg 237
+*/set weechat.bar.title.color_bg 237
+*/set weechat.color.chat_time darkgray
+*/set weechat.color.chat_time_delimiters darkgray
 */set weechat.look.separator_horizontal "━"
-*/set weechat.color.separator 0
-*/set weechat.look.read_marker_string "─"
-*/set weechat.color.chat_read_marker 240
+*/set buflist.format.buffer_current "${color:,240}${format_buffer}"
+*/set weechat.look.read_marker_string "─ "
 */set weechat.look.prefix_suffix "┥"
-*/set weechat.color.chat_prefix_suffix 0
 */set weechat.look.item_buffer_filter "⚑"
 */set weechat.look.prefix_same_nick "⤷"
 */set weechat.look.prefix_error "⚠"
@@ -45,36 +33,34 @@
 */set weechat.look.bar_more_left "◀◀"
 */set weechat.look.bar_more_right "▶▶"
 */set weechat.look.bar_more_up "▲▲"
-*/set weechat.bar.buflist.position top
-*/set weechat.look.buffer_time_format "${color:245}%H${color:240}%M"
-*/set weechat.look.prefix_align_max 10
-*/set weechat.look.eat_newline_glitch on
-*/print -core ========================= TRIGGERS =========================
-*/print -core _____ display URLs in blue _____
-*/trigger add url_color modifier "weechat_print" "${tg_tags} !~ irc_quit" ";[a-z]+://\S+;${color:_lightcyan}${re:0}${color:reset};" ""
-*/print -core _____ Darker join/part/quit messages _____
-*/trigger add irc_join modifier 2000|weechat_print "${tg_tags} =~ ,irc_join|irc_nick_back," "/.*/${tg_prefix}\t${color:237}${tg_message_nocolor}"
-*/trigger add irc_part modifier 2000|weechat_print "${tg_tags} =~ ,irc_part," "/.*/${tg_prefix}\t${color:237}${tg_message_nocolor}"
-*/trigger add irc_quit modifier 2000|weechat_print "${tg_tags} =~ ,irc_quit," "/.*/${tg_prefix}\t${color:237}${tg_message_nocolor}"
-*/print -core _____ Color my messages _____
-*/trigger add color_my_lines modifier "weechat_print" "${tg_tags} =~ ,nick_tuga3d," "/.*/${tg_prefix}\t${color:196}${tg_message_nocolor}" ""
-*/print -core _____ Show desktop notifications via notify-send _____
-*/trigger add osd print '' '${tg_highlight}' '/.*/${weechat.look.nick_prefix}${tg_prefix_nocolor}${weechat.look.nick_suffix} ${tg_message_nocolor}/ /&/&amp;/ /[\\]/&#92;/ /"/&quot;/ /</&lt;/ />/&gt;/' '/exec -norc -nosw notify-send -i weechat "${buffer.full_name}" "${tg_message}"'
-*/print -core _____ Fix artefacts after buffer switch _____
-*/trigger add force_redraw signal "window_switch;buffer_switch" "" "" "/wait 1ms /redraw"
-*/print -core _____ Hide buffers after 100 seconds of inactivity _____
-*/trigger addreplace detach timer 10000;0;0 "" "" "/allchan /eval /perlexec weechat::command('', '/command -buffer irc.\${server}.\${channel} core /buffer hide') if ((${date:%s} - \${buffer[\${info:irc_buffer,\${server},\${channel}}].lines.last_line.data.date}) > 100 && '\${window.buffer.full_name}' !~ 'irc.\${server}.\${channel}' && '\${buffer[\${info:irc_buffer,\${server},\${channel}}].hotlist}' eq '0x0')"
-*/print -core _____ Unhide buffers on any new message or switching to it _____
-*/trigger addreplace reattach print "" "${buffer.hidden} == 1 && ${tg_tag_notify} == message" "" "/command -buffer irc.$server.$channel core /buffer unhide"
-*/trigger addreplace reattach_on_switch signal buffer_switch "${buffer[${tg_signal_data}].hidden} == 1" "" "/command -buffer ${buffer[${tg_signal_data}].full_name} core /buffer unhide"
-*/print -core _____ Switch to core buffer if inactive _____
-*/trigger addreplace idle_timer timer 60000;0;0
-*/trigger set idle_timer conditions ${info:inactivity} >= 600
-*/trigger set idle_timer command /buffer weechat
-*/print -core _____ Upgrade scripts at midnight _____
-*/trigger add upgrade_scripts signal day_changed "" "" "/script update;/wait 10s /script upgrade" "ok"
-*/print -core _____ Show closed buffers in core _____
-*/trigger add close_report signal "buffer_closing" "" "" "/print -core Buffer closed: ${buffer[${tg_signal_data}].full_name}"
-*/print -core ========================= FILTERS =========================
+*/mouse enable
+*/print -core ==================== FILTERS
 */filter add irc_smart * irc_smart_filter *
-*/window refresh
+*/print -core ==================== AUTOCOMPLETION
+*/set weechat.completion.partial_completion_command_arg on
+*/set weechat.completion.partial_completion_other on
+*/print -core ==================== KEYBINDS
+*/key bind meta-g /go
+*/key bind meta-. /bar toggle nicklist
+*/key bind meta-, /bar toggle buflist
+*/key bind meta2-1;2A /window scroll_up
+*/key bind meta2-1;2B /window scroll_down
+*/print -core ==================== TRIGGERS
+*/print -core ==================== display URLs in blue
+*/trigger add url_color modifier "weechat_print" "${tg_tags} !~ irc_quit" ";[a-z]+://\S+;${color:_lightcyan}${re:0}${color:reset};" ""
+*/print -core ==================== Upgrade scripts at midnight
+*/trigger add upgrade_scripts signal day_changed "" "" "/script update;/wait 10s /script upgrade" "ok"
+*/print -core ==================== Show desktop notifications via notify-send
+*/trigger add osd print '' '${tg_highlight}' '/.*/${weechat.look.nick_prefix}${tg_prefix_nocolor}${weechat.look.nick_suffix} ${tg_message_nocolor}/ /&/&amp;/ /[\\]/&#92;/ /"/&quot;/ /</&lt;/ />/&gt;/' '/exec -norc -nosw notify-send -i weechat "${buffer.full_name}" "${tg_message}"'
+*/print -core ==================== BITLBEE
+*/server add im localhost/6667 -autoconnect
+*/connect im
+*/wait 3 /msg &bitlbee account add jabber tuga3d@gmail.com
+*/wait 3 /msg &bitlbee account add facebook tuga3d@gmail.com
+*/wait 4 /msg &bitlbee account gtalk set nick_format %full_name
+*/wait 4 /msg &bitlbee account facebook set nick_format %full_name
+*/wait 5 /msg &bitlbee account gtalk set -del password
+*/print -core ==================== FREENODE
+*/wait 5 /server add freenode chat.freenode.net -autoconnect
+*/wait 5 /set irc.server.freenode.autojoin ""
+*/wait 5 /connect freenode
