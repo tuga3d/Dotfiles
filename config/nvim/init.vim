@@ -30,8 +30,6 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'ntpeters/vim-better-whitespace'
     Plug 'Yggdroot/indentLine'
 
-    Plug 'tmhedberg/SimpylFold', {'for': 'python'}
-
     Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
     Plug 'Xuyuanp/nerdtree-git-plugin'
     Plug 'tpope/vim-fugitive'
@@ -45,12 +43,14 @@ call plug#begin('~/.config/nvim/plugged')
 
     Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
     Plug 'zchee/deoplete-jedi', {'for': 'python', 'do': 'git submodule update --recursive --init'}
-    Plug 'Shougo/neco-vim'
-    " Plug 'zchee/deoplete-clang'
-    Plug 'Shougo/neoinclude.vim'
+    Plug 'tmhedberg/SimpylFold', {'for': 'python'}
+    Plug 'zchee/deoplete-clang'
+    Plug 'zchee/deoplete-go', {'do': 'make'}
 
-    " Plug 'vim-python/python-syntax', {'for': 'python'}
+    Plug 'Shougo/neco-vim'
     Plug 'Shougo/neco-syntax', {'for': 'vim'}
+
+    Plug 'Shougo/neoinclude.vim'
 
     Plug 'tpope/vim-repeat'
     Plug 'jiangmiao/auto-pairs'
@@ -123,13 +123,17 @@ call plug#begin('~/.config/nvim/plugged')
     inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
     "}}}
     " deoplete-jedi"{{{
-    " let g:deoplete#sources#jedi#show_docstring = 1
+    let g:deoplete#sources#jedi#show_docstring = 1
     let g:deoplete#sources#jedi#python_path = 'python3'
     "}}}
     " deoplete-clang"{{{
     let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-4.0/lib/libclang.so.1'
     let g:deoplete#sources#clang#clang_header = '/usr/lib/llvm-4.0'
     let g:deoplete#sources#clang#sort_algo = 'priority'
+    "}}}
+    " deoplete-go"{{{
+    let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
+    let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'const']
     "}}}
     " auto-pairs"{{{
     " see issue #116
@@ -139,9 +143,6 @@ call plug#begin('~/.config/nvim/plugged')
     " indentLine"{{{
     let g:indentLine_color_gui = '#343d46'
     let g:indentLine_char = '⋮'
-    "}}}
-    " python-syntax"{{{
-    let python_highlight_all = 1
     "}}}
     " colorschemes"{{{
     let g:onedark_terminal_italics = 1
@@ -175,11 +176,9 @@ set showcmd                     " extra info at end of command line
 set splitbelow                  " open horizontal splits below current window
 set splitright                  " open vertical splits to the right of the current window
 set virtualedit=block           " allow cursor to move where there is no text in visual block mode
-set noswapfile                  " dont use swap file
 set hidden                      " allows you to hide buffers with unsaved changes without being prompted
 set spelllang=pt,en
 set completeopt+=noinsert
-set completeopt-=preview
 set foldlevel=10
 set inccommand=split
 set ignorecase                  " case insensitive search
@@ -203,6 +202,7 @@ augroup END
 augroup TerminalEnter
     autocmd!
     autocmd WinEnter term://* :startinsert
+    autocmd TermOpen term://* :startinsert
     " autoresize terminal window
     autocmd WinLeave term://* :resize 3
     autocmd WinEnter term://* :resize 15
@@ -244,18 +244,19 @@ augroup FileTypePython
     autocmd!
     " au Filetype python setlocal keywordprg=:!python3\ -m\ pydoc
     au Filetype python setlocal ts=8 et sw=4 sts=4
-    au Filetype python setlocal formatprg=autopep8\ --experimental\ -
+    au FileType python map <buffer> <leader>r :w <bar> :5split <bar> :set wfh <bar> :terminal python3 %<cr>
+    au FileType python map <buffer> <leader>d :w <bar> :buf <bar> :terminal python3 -m pudb %<cr>
 augroup END
 "}}}
-" Filetype Tpl "{{{
-augroup FileTypeTpl
+" Filetype Go "{{{
+augroup FileTypePython
     autocmd!
-    au BufReadPost *.tpl set ft=mako
+    au FileType go map <buffer> <leader>r :w <bar> :5split <bar> :set wfh <bar> :terminal go run %<cr>
 augroup END
 "}}}
 
 " Some alterations to python syntax"{{{
-    au filetype python syn keyword pythonStatement     def nextgroup=pythonFunction skipwhite
+    au Filetype python syn keyword pythonStatement     def nextgroup=pythonFunction skipwhite
     au Filetype python syn keyword pythonStatement     class nextgroup=pythonClassName skipwhite
     au Filetype python syn match   pythonClassName    '\h\w*' display contained
 
@@ -322,13 +323,6 @@ augroup END
     "}}}
     " <leader>tt -- Open a terminal split"{{{
     nnoremap <leader>tt :15split <bar> :set wfh <bar> :terminal<cr>
-    "}}}
-    " <leader>tr -- Run current buffer on a terminal split"{{{
-    nnoremap <leader>tr :w <bar> :5split <bar> :set wfh <bar> :terminal python3 %<cr>
-    " nnoremap <leader>tr :wa <bar> :5split <bar> :set wfh <bar> :terminal python3 main.py<cr>
-    "}}}
-    " <leader>td -- launch pudb in the current buffer"{{{
-    nnoremap <leader>td :w <bar> :buf <bar> :terminal python3 -m pudb %<cr>
     "}}}
     " <leader>sp -- show pop-up with corrections"{{{
     nnoremap <leader>sp ea<C-X><C-S>
